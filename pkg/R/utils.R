@@ -45,9 +45,11 @@ recoder <- function(x, from=c(), to=c()){
 #' @seealso \code{\link[zoo]{na.locf}}
 #' @author Jan Wijffels 
 #' @examples
+#' require(zoo)
 #' x <- c(2,NA,NA,4,5,2,NA)
 #' naLOCFPlusone(x)
 naLOCFPlusone <- function(x){
+  require(zoo)
 	ix <- cumsum(is.na(x))
 	na.locf(x) + ix - cummax(ix * !is.na(x))
 }

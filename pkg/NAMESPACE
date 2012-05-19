@@ -1,5 +1,6 @@
 export(matchmerge)
 export(naLOCFPlusone)
 export(read.dbi.ffdf)
+export(read.odbc.ffdf)
 export(recoder)
 export(renameColumns)

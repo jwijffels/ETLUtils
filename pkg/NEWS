@@ -1,6 +1,9 @@
 Package: ETLUtils
 ================
 
+Version: 1.1 [2012-05-18]
+- Added function read.odbc.ffdf to read in data from an ODBC channel into an ffdf object
+- Packages DBI, RODBC and zoo are now Suggested packages instead of Required
 Version: 1.0 [2012-03-26]
 - Initial package providing functions matchmerge, recoder, naLOCFPlusone, renameColumns, read.dbi.ffdf
 

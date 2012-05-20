@@ -12,7 +12,7 @@ Description: Provides functions to facilitate the use of the ff package in
     Also contains some basic utility functions to do fast left outer join
     merging based on match and basic recoding.
 Version: 1.1
-URL: http://www.bnosac.be
+URL: http://www.bnosac.be https://github.com/jwijffels/ETLUtils
 Date: 2012-05-18
 Depends:
     ff

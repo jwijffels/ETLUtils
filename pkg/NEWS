@@ -1,6 +1,9 @@
 Package: ETLUtils
 ================
 
+Version: 1.2 [2013-01-03]
+- Added function read.jdbc.ffdf to read in data from an RJDBC channel into an ffdf object. This can be used to import data from Hive into an ffdf
+- Addes RJDBC as a suggested package
 Version: 1.1 [2012-05-18]
 - Added function read.odbc.ffdf to read in data from an ODBC channel into an ffdf object
 - Packages DBI, RODBC and zoo are now Suggested packages instead of Required

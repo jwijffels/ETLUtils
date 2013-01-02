@@ -7,20 +7,22 @@ Type: Package
 LazyLoad: yes
 Author: Jan Wijffels
 Description: Provides functions to facilitate the use of the ff package in
-    interaction with bigdata in SQL databases (e.g. in Oracle/MySQL/PostgreSQL)
-    by allowing easy importing directly into ffdf objects using DBI and RODBC.
-    Also contains some basic utility functions to do fast left outer join
-    merging based on match and basic recoding.
-Version: 1.1
+    interaction with bigdata in SQL databases (e.g. in
+    Oracle/MySQL/PostgreSQL/Hive) by allowing easy importing directly into ffdf
+    objects using DBI, RODBC and RJDBC. Also contains some basic utility
+    functions to do fast left outer join merging based on match and basic
+    recoding.
+Version: 1.2
 URL: http://www.bnosac.be https://github.com/jwijffels/ETLUtils
-Date: 2012-05-18
+Date: 2013-01-03
 Depends:
     ff
 Suggests:
     RSQLite,
     zoo,
     DBI,
-    RODBC
+    RODBC,
+    RJDBC
 Collate:
     'matchmerge.R'
     'pkg.R'

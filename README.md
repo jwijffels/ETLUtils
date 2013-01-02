@@ -6,6 +6,7 @@ Currently the following functions might be useful to you if you have some large 
 
   - read.dbi.ffdf (reading of SQL data through DBI)
   - read.odbc.ffdf (reading of SQL data through RODBC)
+  - read.jdbc.ffdf (reading of SQL data through RJDBC)
 
 An example can be found at http://www.bnosac.be/blog/19-get-your-large-sql-data-in-ff-swiftly
 

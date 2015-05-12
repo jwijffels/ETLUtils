@@ -906,27 +906,270 @@ read.jdbc.ffdf <- function(
 
 
 
+
+
+#' Write ffdf data to a database table by using a DBI connection.
+#' 
+#' Write \code{\link[ff]{ffdf}} data to a database table by using a DBI connection.
+#' This can for example be used to store large datasets from 
+#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+#' Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
+#' You might also consider that as an alternative to using this procedure.
+#' 
+#' Opens up the DBI connection using \code{DBI::dbConnect}, writes data to the SQL table
+#' using \code{DBI::dbWriteTable} by extracting the data in batches from the \code{\link[ff]{ffdf}}
+#' and appending them to the table.
+#'
+#' @param x the \code{\link[ff]{ffdf}} to write to the database
+#' @param name character string with the name of the table to store the data in. Passed on to \code{\link[DBI]{dbWriteTable}}.
+#' @param dbConnect.args a list of arguments to pass to DBI's \code{\link[DBI]{dbConnect}} (like drv, dbname, username, password). See the examples.
+#' @param BATCHBYTES integer: bytes allowed for the size of the data.frame storing the result of reading one chunk. 
+#' See documentation in \code{\link[ff]{read.table.ffdf}} for more details.
+#' @param RECORDBYTES optional integer scalar representing the bytes needed to process a single row of the ffdf
+#' @param by integer passed on to \code{\link[bit]{chunk}} indicating to write to the database in chunks of this size. Overwrites
+#' the behaviour of BATCHBYTES and RECORDBYTES.
+#' @param VERBOSE logical: TRUE to verbose timings for each processed chunk (default FALSE).
+#' @param ... optional parameters passed on to \code{\link[DBI]{dbWriteTable}}
+#' @return 
+#' invisible()
+#' @export
+#' @seealso \code{\link[DBI]{dbWriteTable}}, \code{\link[bit]{chunk}}
+#' @examples
+#' require(ff)
+#' 
+#' ##
+#' ## Example query using data in sqlite
+#' ##
+#' require(RSQLite)
+#' dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
+#' drv <- dbDriver("SQLite")
+#' query <- "select * from testdata limit 10000"
+#' x <- read.dbi.ffdf(query = query, dbConnect.args = list(drv = drv, dbname = dbfile), 
+#' first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
+#' 
+#' write.dbi.ffdf(x = x, name = "helloworld", row.names = FALSE, overwrite = TRUE,
+#'   dbConnect.args = list(drv = drv, dbname = dbfile), 
+#'   by = 1000, VERBOSE=TRUE)
+#' test <- read.dbi.ffdf(query = "select * from helloworld", 
+#'   dbConnect.args = list(drv = drv, dbname = dbfile))
+#' 
+#' \dontrun{
+#' require(ROracle)
+#' write.dbi.ffdf(x = x, name = "hellooracle", row.names = FALSE, overwrite = TRUE,
+#'   dbConnect.args = list(drv = dbDriver("Oracle"), 
+#'                         user = "YourUser", password = "YourPassword", dbname = "Mydatabase"), 
+#'   VERBOSE=TRUE)
+#' }
 write.dbi.ffdf <- function(x, name, 
                            dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""),
                            RECORDBYTES = sum(.rambytes[vmode(x)]), 
-                           BATCHBYTES = getOption("ffbatchbytes"), 
+                           BATCHBYTES = getOption("ffbatchbytes"),
+                           by = NULL,
+                           VERBOSE = FALSE,
                            ...){
-    require(DBI)
-    cleanupConnection <- function(x){
-      if("channel" %in% names(x)){
-        DBI::dbDisconnect(x$channel)
-      }
+  stopifnot(inherits(x, "ffdf"))
+  stopifnot(nrow(x) > 0)
+  require(DBI)
+  cleanupConnection <- function(x){
+    if("channel" %in% names(x)){
+      DBI::dbDisconnect(x$channel)
     }
-    dbiinfo <- list()
-    dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
-    on.exit(cleanupConnection(dbiinfo))
+  }
+  dbiinfo <- list()
+  dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
+  on.exit(cleanupConnection(dbiinfo))
     
-    for(i in chunk(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, ...)){
-      dbWriteTable(dbiinfo$channel, name = name, value = x[i, ])
+  chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
+  for(i in seq_along(chunks)){
+    if (VERBOSE){
+      cat(sprintf("%s dbWriteTable chunk %s/%s\n", Sys.time(), i, length(chunks)))
+    } 
+    chunkidx <- chunks[[i]]
+    dbWriteTable.args <- list(...)
+    dbWriteTable.args$conn <- dbiinfo$channel
+    dbWriteTable.args$name <- name
+    dbWriteTable.args$value <- x[chunkidx, ]
+    if(i > 1 && "overwrite" %in% names(dbWriteTable.args)){
+      dbWriteTable.args$overwrite <- FALSE
     }
-    invisible()
+    if(i > 1){
+      dbWriteTable.args$append <- TRUE
+    }
+    do.call('dbWriteTable', dbWriteTable.args)
+  }
+  invisible()
 }
 
+
+#' Write ffdf data to a database table by using a JDBC connection.
+#' 
+#' Write \code{\link[ff]{ffdf}} data to a database table by using a JDBC connection.
+#' This can for example be used to store large datasets from 
+#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+#' Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
+#' You might also consider that as an alternative to using this procedure.
+#' 
+#' Opens up the JDBC connection using \code{RJDBC::dbConnect}, writes data to the SQL table
+#' using \code{RJDBC::dbWriteTable} by extracting the data in batches from the \code{\link[ff]{ffdf}}
+#' and appending them to the table.
+#'
+#' @param x the \code{\link[ff]{ffdf}} to write to the database
+#' @param name character string with the name of the table to store the data in. Passed on to \code{dbWriteTable}.
+#' @param dbConnect.args a list of arguments to pass to JDBC's \code{RJDBC::dbConnect} (like drv, dbname, username, password). See the examples.
+#' @param BATCHBYTES integer: bytes allowed for the size of the data.frame storing the result of reading one chunk. 
+#' See documentation in \code{\link[ff]{read.table.ffdf}} for more details.
+#' @param RECORDBYTES optional integer scalar representing the bytes needed to process a single row of the ffdf
+#' @param by integer passed on to \code{\link[bit]{chunk}} indicating to write to the database in chunks of this size. Overwrites
+#' the behaviour of BATCHBYTES and RECORDBYTES.
+#' @param VERBOSE logical: TRUE to verbose timings for each processed chunk (default FALSE).
+#' @param ... optional parameters passed on to \code{dbWriteTable}
+#' @return 
+#' invisible()
+#' @export
+#' @seealso \code{\link[RJDBC]{JDBCConnection-methods}}, \code{\link[bit]{chunk}}
+#' @examples
+#' \dontrun{
+#' require(ff)
+#' 
+#' ##
+#' ## Example query using data in sqlite
+#' ##
+#' require(RSQLite)
+#' dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
+#' drv <- JDBC(driverClass = "org.sqlite.JDBC", classPath = "/usr/local/lib/sqlite-jdbc-3.7.2.jar")
+#' query <- "select * from testdata limit 10000"
+#' x <- read.jdbc.ffdf(query = query, 
+#'  dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)), 
+#'  first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
+#'  
+#' write.dbi.ffdf(x = x, name = "helloworld", row.names = FALSE, overwrite = TRUE,
+#'   dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)), 
+#'   by = 1000, VERBOSE=TRUE)
+#' test <- read.dbi.ffdf(query = "select * from helloworld", 
+#'   dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)))
+#' }
+write.jdbc.ffdf <- function(x, name, 
+                            dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""),
+                            RECORDBYTES = sum(.rambytes[vmode(x)]), 
+                            BATCHBYTES = getOption("ffbatchbytes"),
+                            by = NULL,
+                            VERBOSE = FALSE,
+                            ...){
+  stopifnot(inherits(x, "ffdf"))
+  stopifnot(nrow(x) > 0)
+  require(RJDBC)
+  cleanupConnection <- function(x){
+    if("channel" %in% names(x)){
+      RJDBC::dbDisconnect(x$channel)
+    }
+  }
+  dbiinfo <- list()
+  dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
+  on.exit(cleanupConnection(dbiinfo))
+  
+  chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
+  for(i in seq_along(chunks)){
+    if (VERBOSE){
+      cat(sprintf("%s dbWriteTable chunk %s/%s\n", Sys.time(), i, length(chunks)))
+    } 
+    chunkidx <- chunks[[i]]
+    dbWriteTable.args <- list(...)
+    dbWriteTable.args$conn <- dbiinfo$channel
+    dbWriteTable.args$name <- name
+    dbWriteTable.args$value <- x[chunkidx, ]
+    if(i > 1 && "overwrite" %in% names(dbWriteTable.args)){
+      dbWriteTable.args$overwrite <- FALSE
+    }
+    if(i > 1){
+      dbWriteTable.args$append <- TRUE
+    }
+    do.call('dbWriteTable', dbWriteTable.args)
+  }
+  invisible()
+}
+
+
+
+#' Write ffdf data to a database table by using a ODBC connection.
+#' 
+#' Write \code{\link[ff]{ffdf}} data to a database table by using a ODBC connection.
+#' This can for example be used to store large datasets from 
+#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+#' Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
+#' You might also consider that as an alternative to using this procedure.
+#' 
+#' Opens up the ODBC connection using \code{RODBC::odbcConnect}, writes data to the SQL table
+#' using \code{RODBC::sqlSave} by extracting the data in batches from the \code{\link[ff]{ffdf}}
+#' and appending them to the table.
+#'
+#' @param x the \code{\link[ff]{ffdf}} to write to the database
+#' @param tablename character string with the name of the table to store the data in. Passed on to \code{\link[RODBC]{sqlSave}}.
+#' @param odbcConnect.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcConnect}} (like dsn, uid, pwd). See the examples.
+#' @param BATCHBYTES integer: bytes allowed for the size of the data.frame storing the result of reading one chunk. 
+#' See documentation in \code{\link[ff]{read.table.ffdf}} for more details.
+#' @param RECORDBYTES optional integer scalar representing the bytes needed to process a single row of the ffdf
+#' @param by integer passed on to \code{\link[bit]{chunk}} indicating to write to the database in chunks of this size. Overwrites
+#' the behaviour of BATCHBYTES and RECORDBYTES.
+#' @param VERBOSE logical: TRUE to verbose timings for each processed chunk (default FALSE).
+#' @param ... optional parameters passed on to \code{\link[RODBC]{sqlSave}}
+#' @return 
+#' invisible()
+#' @export
+#' @seealso \code{\link[RODBC]{sqlSave}}, \code{\link[bit]{chunk}}
+#' @examples
+#' ##
+#' ## Using the sqlite database (smalldb.sqlite3) in the /inst folder of the package
+#' ## set up the sqlite ODBC driver (www.stats.ox.ac.uk/pub/bdr/RODBC-manual.pd) 
+#' ## and call it 'smalltestsqlitedb' 
+#' ##
+#' \dontrun{
+#' require(RODBC)
+#' x <- read.odbc.ffdf(
+#'   query = "select * from testdata limit 10000",
+#'   odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""), 
+#'   nrows = -1, 
+#'   first.rows = 100, next.rows = 1000, VERBOSE = TRUE)
+#'   
+#' write.odbc.ffdf(x = x, name = "testdata", rownames = FALSE, append = TRUE,
+#'   odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""),  
+#'   by = 1000, VERBOSE=TRUE)
+#' }
+write.odbc.ffdf <- function(x, tablename, 
+                            odbcConnect.args = list(dsn=NULL, uid = "", pwd = ""), 
+                            RECORDBYTES = sum(.rambytes[vmode(x)]), 
+                            BATCHBYTES = getOption("ffbatchbytes"),
+                            by = NULL,
+                            VERBOSE = FALSE,
+                            ...){
+  stopifnot(inherits(x, "ffdf"))
+  stopifnot(nrow(x) > 0)
+  require(RODBC)
+  cleanupConnection <- function(x){
+    if("channel" %in% names(x)){
+      RODBC::odbcClose(x$channel)
+    }
+  }
+  odbcinfo <- list()
+  odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)
+  on.exit(cleanupConnection(odbcinfo))
+  
+  chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
+  for(i in seq_along(chunks)){
+    if (VERBOSE){
+      cat(sprintf("%s sqlSave chunk %s/%s\n", Sys.time(), i, length(chunks)))
+    } 
+    chunkidx <- chunks[[i]]
+    sqlSave.args <- list(...)
+    sqlSave.args$channel <- odbcinfo$channel
+    sqlSave.args$tablename <- tablename
+    sqlSave.args$dat <- x[chunkidx, ]
+    if(i > 1){
+      sqlSave.args$append <- TRUE
+    }
+    do.call('sqlSave', sqlSave.args)
+  }
+  invisible()
+}
 
 
 # NOTE that this colClass implementation works only because accidentally the last position of the oldClasses is needed

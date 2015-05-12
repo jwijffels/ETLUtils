@@ -10,10 +10,16 @@ Currently the following functions might be useful to you if you have some large 
 
 An example can be found at http://www.bnosac.be/blog/19-get-your-large-sql-data-in-ff-swiftly
 
+For users who want to store data from an ffdf back in a database, the package also provides
+
+  - write.dbi.ffdf (writing of ffdf data to a database table through DBI)
+  - write.odbc.ffdf (writing of ffdf data to a database table through RODBC)
+  - write.jdbc.ffdf (writing of ffdf data to a database table through RJDBC)
+
 Other utilities
 -----------
 
-Other functions include matchmerge, recoder, naLOCFPlusone and renameColumns.
+Other functions include factorise, matchmerge, recoder, naLOCFPlusone and renameColumns.
 
 CRAN
 -----------

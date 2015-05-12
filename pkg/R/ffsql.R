@@ -43,7 +43,6 @@
 #' returned by \code{\link[DBI]{fetch}} and possibly transFUN. 
 #' @export
 #' @seealso \code{\link[ff]{read.table.ffdf}, \link{read.odbc.ffdf}}
-#' @author Jan Wijffels
 #' @examples
 #' require(ff)
 #' 
@@ -59,12 +58,14 @@
 #' class(x)
 #' x[1:10, ]
 #' 
-#' ## show it is the same as getting the data directly using RSQLite apart from characters which are factors in ffdf objects
+#' ## show it is the same as getting the data directly using RSQLite 
+#' ## apart from characters which are factors in ffdf objects
 #' directly <- dbGetQuery(dbConnect(drv = drv, dbname = dbfile), query)
 #' directly <- as.data.frame(as.list(directly), stringsAsFactors=TRUE)
 #' all.equal(x[,], directly)
 #'
-#' ## show how to use the transFUN argument to transform the data before saving into the ffdf, and shows the use of the levels argument
+#' ## show how to use the transFUN argument to transform the data before saving into the ffdf
+#' ## and shows the use of the levels argument
 #' query <- "select * from testdata limit 10"
 #' x <- read.dbi.ffdf(query = query, dbConnect.args = list(drv = drv, dbname = dbfile), 
 #' first.rows = 100, next.rows = 1000, VERBOSE=TRUE, levels = list(a = rev(LETTERS)),
@@ -86,8 +87,10 @@
 #' }
 #' dim(x)
 #' x[,]
-#' combined <- read.dbi.ffdf(query = query, dbConnect.args = list(drv = drv, dbname = dbfile), 
-#' first.rows = 100, next.rows = 1000, x = x, VERBOSE=TRUE, transFUN = transformexample, subtractdays=1000)
+#' combined <- read.dbi.ffdf(query = query, 
+#'  dbConnect.args = list(drv = drv, dbname = dbfile), 
+#'  first.rows = 100, next.rows = 1000, x = x, VERBOSE=TRUE, 
+#'  transFUN = transformexample, subtractdays=1000)
 #' dim(combined)
 #' combined[,]
 #' 
@@ -114,10 +117,10 @@ read.dbi.ffdf <- function(
   require(DBI)
 	cleanupConnection <- function(x){
 		if("resultset" %in% names(x)){
-			dbClearResult(res=x$resultset)
+			DBI::dbClearResult(res=x$resultset)
 		}
 		if("channel" %in% names(x)){
-			dbDisconnect(x$channel)
+		  DBI::dbDisconnect(x$channel)
 		}
 	}
 	dbiinfo <- list()
@@ -370,11 +373,11 @@ read.dbi.ffdf <- function(
 #' returned by \code{\link[RODBC]{sqlGetResults}} and possibly transFUN. 
 #' @export
 #' @seealso \code{\link[ff]{read.table.ffdf}, \link{read.dbi.ffdf}}
-#' @author Jan Wijffels
 #' @examples
 #' ##
 #' ## Using the sqlite database (smalldb.sqlite3) in the /inst folder of the package
-#' ## set up the sqlite ODBC driver (www.stats.ox.ac.uk/pub/bdr/RODBC-manual.pd) and call it 'smalltestsqlitedb' 
+#' ## set up the sqlite ODBC driver (www.stats.ox.ac.uk/pub/bdr/RODBC-manual.pd) 
+#' ## and call it 'smalltestsqlitedb' 
 #' ##
 #' \dontrun{
 #' require(RODBC)
@@ -397,7 +400,7 @@ read.odbc.ffdf <- function(
   require(RODBC)
   cleanupConnection <- function(x){
     if("channel" %in% names(x)){
-      odbcClose(x$channel)
+      RODBC::odbcClose(x$channel)
     }
   }
   odbcinfo <- list()
@@ -650,7 +653,6 @@ read.odbc.ffdf <- function(
 #' returned by \code{RJDBC::fetch} and possibly transFUN. 
 #' @export
 #' @seealso \code{\link[ff]{read.table.ffdf}, \link{read.jdbc.ffdf}}
-#' @author Jan Wijffels
 #' @examples
 #' \dontrun{
 #' require(ff)
@@ -662,8 +664,9 @@ read.odbc.ffdf <- function(
 #' dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
 #' drv <- JDBC(driverClass = "org.sqlite.JDBC", classPath = "/usr/local/lib/sqlite-jdbc-3.7.2.jar")
 #' query <- "select * from testdata limit 10000"
-#' x <- read.jdbc.ffdf(query = query, dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)), 
-#'                     first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
+#' x <- read.jdbc.ffdf(query = query, 
+#'  dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)), 
+#'  first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
 #' class(x)
 #' x[1:10, ]
 #' }
@@ -679,10 +682,10 @@ read.jdbc.ffdf <- function(
   require(RJDBC)
   cleanupConnection <- function(x){
     if("resultset" %in% names(x)){
-      dbClearResult(res=x$resultset)
+      RJDBC::dbClearResult(res=x$resultset)
     }
     if("channel" %in% names(x)){
-      dbDisconnect(x$channel)
+      RJDBC::dbDisconnect(x$channel)
     }
   }
   jdbcinfo <- list()
@@ -901,6 +904,28 @@ read.jdbc.ffdf <- function(
   return(x)
 }
 
+
+
+write.dbi.ffdf <- function(x, name, 
+                           dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""),
+                           RECORDBYTES = sum(.rambytes[vmode(x)]), 
+                           BATCHBYTES = getOption("ffbatchbytes"), 
+                           ...){
+    require(DBI)
+    cleanupConnection <- function(x){
+      if("channel" %in% names(x)){
+        DBI::dbDisconnect(x$channel)
+      }
+    }
+    dbiinfo <- list()
+    dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
+    on.exit(cleanupConnection(dbiinfo))
+    
+    for(i in chunk(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, ...)){
+      dbWriteTable(dbiinfo$channel, name = name, value = x[i, ])
+    }
+    invisible()
+}
 
 
 

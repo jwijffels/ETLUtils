@@ -18,7 +18,6 @@
 #' @return 
 #' x where from values are recoded to the supplied to values
 #' @export
-#' @author Jan Wijffels 
 #' @seealso \code{\link{match}}
 #' @examples
 #' recoder(x=append(LETTERS, NA, 5), from = c("A","B"), to = c("a.123","b.123")) 
@@ -43,15 +42,13 @@ recoder <- function(x, from=c(), to=c()){
 #' @return a vector where NA's are replaced with the LOCF + 1 
 #' @export
 #' @seealso \code{\link[zoo]{na.locf}}
-#' @author Jan Wijffels 
 #' @examples
 #' require(zoo)
 #' x <- c(2,NA,NA,4,5,2,NA)
 #' naLOCFPlusone(x)
 naLOCFPlusone <- function(x){
-  require(zoo)
 	ix <- cumsum(is.na(x))
-	na.locf(x) + ix - cummax(ix * !is.na(x))
+	zoo::na.locf(x) + ix - cummax(ix * !is.na(x))
 }
 
 
@@ -68,7 +65,6 @@ naLOCFPlusone <- function(x){
 #' renamed to the corresponding to column names. 
 #' @export
 #' @seealso \code{\link{colnames}, \link{recoder}}
-#' @author Jan Wijffels 
 #' @examples
 #' x <- data.frame(x = 1:4, y = LETTERS[1:4])
 #' renameColumns(x, from = c("x","y"), to = c("digits","letters"))
@@ -83,4 +79,60 @@ renameColumns <- function(x, from = "", to = ""){
 	x
 }
 
+
+
+#' Put character vectors, columns of a data.frame or list elements as factor
+#' 
+#' Put character vectors, columns of a data.frame or list elements as factor if they are character strings
+#' or optionally if they are logicals\cr
+#'
+#' @param x a character vector, a data.frame or a list
+#' @param logicals logical indicating if logical vectors should also be converted to factors. Defaults to FALSE.
+#' @param ... optional arguments passed on to the methods
+#' @return The updated x vector/data.frame or list where the character vectors or optionally logical elements are 
+#' converted to factors
+#' @export
+#' @seealso \code{\link{as.factor}}, \code{\link{factor}}
+#' @examples
+#' x <- data.frame(x = 1:4, y = LETTERS[1:4], b = c(TRUE, FALSE, NA, TRUE), stringsAsFactors=FALSE)
+#' str(factorise(x))
+#' str(factorise(x, logicals = TRUE))
+#' str(factorise(list(a = LETTERS, b = 1:10, c = pi, d = list(x = x))))
+factorise <- function(x, logicals=FALSE, ...){
+  UseMethod(generic="factorise")
+}
+#' @rdname factorise
+#' @export
+factorise.default <- function(x, logicals=FALSE, ...){
+  x
+}
+#' @rdname factorise
+#' @export
+factorise.character <- function(x, logicals=FALSE, ...){
+  factor(x)
+}
+#' @rdname factorise
+#' @export
+factorise.data.frame <- function(x, logicals=FALSE, ...){
+  if(logicals){
+    tofactor <- sapply(x, FUN=function(x) inherits(x, "logical"))
+    tofactor <- names(tofactor)[tofactor == TRUE]
+    for(column in tofactor){
+      x[[column]] <- factor(x[[column]])
+    }
+  }
+  tofactor <- sapply(x, FUN=function(x) inherits(x, "character"))
+  tofactor <- tofactor[tofactor == TRUE]
+  if(length(tofactor) == 0){
+    return(x)
+  }
+  x <- unclass(x)
+  x <- as.data.frame(x, stringsAsFactors=TRUE)
+  x
+}
+#' @rdname factorise
+#' @export
+factorise.list <- function(x, logicals=FALSE, ...){
+  lapply(x, factorise, logicals = logicals)
+}
 

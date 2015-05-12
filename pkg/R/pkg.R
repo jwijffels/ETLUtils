@@ -8,5 +8,5 @@
 #' @author Jan Wijffels \email{jwijffels@@bnosac.be}
 #' @examples
 #' # See the specified functions in the package
-{}
+NULL
 

@@ -53,7 +53,6 @@
 #' The output columns are the columns in x followed by the extra columns in y. 
 #' @export
 #' @seealso \code{\link{cbind}, \link{match}, \link{merge}}
-#' @author Jan Wijffels 
 #' @examples
 #' left <- data.frame(idlhs = c(1:4, 3:5), a = LETTERS[1:7], stringsAsFactors = FALSE)
 #' right <- data.frame(idrhs = c(1:4), b = LETTERS[8:11], stringsAsFactors = FALSE)
@@ -88,8 +87,9 @@
 #' sales <- expand.grid(item = unique(products$key), sales = rnorm(10000, mean = 100))
 #' str(products)
 #' str(sales)
-#' info <- matchmerge(x=sales, y=products, by.x=sales$item, by.y=products$key, all.x=TRUE, by.iskey=TRUE, 
-#' add.columns=c("size","distributor"), check.duplicates=FALSE)
+#' info <- matchmerge(x=sales, y=products, 
+#'   by.x=sales$item, by.y=products$key, all.x=TRUE, by.iskey=TRUE, 
+#'   add.columns=c("size","distributor"), check.duplicates=FALSE)
 #' str(info)
 #' tapply(info$sales, info$distributor, FUN=sum)
 matchmerge <- function(x, y, by.x, by.y, all.x=FALSE, by.iskey=FALSE, suffix = ".y", add.columns=colnames(y), check.duplicates=TRUE, trace=FALSE){

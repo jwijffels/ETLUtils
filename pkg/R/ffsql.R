@@ -911,8 +911,8 @@ read.jdbc.ffdf <- function(
 #' Write ffdf data to a database table by using a DBI connection.
 #' 
 #' Write \code{\link[ff]{ffdf}} data to a database table by using a DBI connection.
-#' This can for example be used to store large datasets from 
-#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+#' This can for example be used to store large ffdf datasets from R in
+#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases. \cr
 #' Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
 #' You might also consider that as an alternative to using this procedure.
 #' 
@@ -1004,8 +1004,8 @@ write.dbi.ffdf <- function(x, name,
 #' Write ffdf data to a database table by using a JDBC connection.
 #' 
 #' Write \code{\link[ff]{ffdf}} data to a database table by using a JDBC connection.
-#' This can for example be used to store large datasets from 
-#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+#' This can for example be used to store large ffdf datasets from R in
+#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases. \cr
 #' Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
 #' You might also consider that as an alternative to using this procedure.
 #' 
@@ -1034,7 +1034,7 @@ write.dbi.ffdf <- function(x, name,
 #' ##
 #' ## Example query using data in sqlite
 #' ##
-#' require(RSQLite)
+#' require(RJDBC)
 #' dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
 #' drv <- JDBC(driverClass = "org.sqlite.JDBC", classPath = "/usr/local/lib/sqlite-jdbc-3.7.2.jar")
 #' query <- "select * from testdata limit 10000"
@@ -1042,10 +1042,10 @@ write.dbi.ffdf <- function(x, name,
 #'  dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)), 
 #'  first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
 #'  
-#' write.dbi.ffdf(x = x, name = "helloworld", row.names = FALSE, overwrite = TRUE,
+#' write.jdbc.ffdf(x = x, name = "helloworld", row.names = FALSE, overwrite = TRUE,
 #'   dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)), 
 #'   by = 1000, VERBOSE=TRUE)
-#' test <- read.dbi.ffdf(query = "select * from helloworld", 
+#' test <- read.jdbc.ffdf(query = "select * from helloworld", 
 #'   dbConnect.args = list(drv = drv, url = sprintf("jdbc:sqlite:%s", dbfile)))
 #' }
 write.jdbc.ffdf <- function(x, name, 
@@ -1093,8 +1093,8 @@ write.jdbc.ffdf <- function(x, name,
 #' Write ffdf data to a database table by using a ODBC connection.
 #' 
 #' Write \code{\link[ff]{ffdf}} data to a database table by using a ODBC connection.
-#' This can for example be used to store large datasets from 
-#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+#' This can for example be used to store large ffdf datasets from R in
+#' Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases. \cr
 #' Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
 #' You might also consider that as an alternative to using this procedure.
 #' 

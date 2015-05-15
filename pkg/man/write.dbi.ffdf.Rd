@@ -32,8 +32,8 @@ invisible()
 }
 \description{
 Write \code{\link[ff]{ffdf}} data to a database table by using a DBI connection.
-This can for example be used to store large datasets from
-Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
+This can for example be used to store large ffdf datasets from R in
+Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases. \cr
 Mark that for very large datasets, these SQL databases might have tools to speed up by bulk loading.
 You might also consider that as an alternative to using this procedure.
 }

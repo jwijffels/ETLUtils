@@ -2,7 +2,7 @@ Package: ETLUtils
 Maintainer: Jan Wijffels <jwijffels@bnosac.be>
 License: GPL-2
 Title: Utility functions to execute standard ETL operations (using
-    package ff) on large data.
+    package ff) on large data
 Type: Package
 LazyLoad: yes
 Author: Jan Wijffels

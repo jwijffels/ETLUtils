@@ -29,10 +29,12 @@ CRAN
 -----------
 This is the development version of the package which is available at CRAN.
 
-To install the latest version from github
+To install the latest version from github:
 ```
 devtools::install_github("jwijffels/ETLUtils")
 ```
+
+To get the lastest version from CRAN:
 
 * [ETLUtils @ CRAN]
 

@@ -6,3 +6,11 @@ language: r
 
 sudo: required
 
+## System dependencies
+apt_packages:
+ - libcurl4-openssl-dev
+ - libxml2-dev
+ - r-cran-rjava
+ - r-cran-rodbc
+
+

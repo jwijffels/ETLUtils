@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jwijffels/ETLUtils.png?branch=master)](https://travis-ci.org/jwijffels/ETLUtils)
+
 ETLUtils
 =========
 

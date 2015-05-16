@@ -3,5 +3,6 @@
 .RData
 /output
 *.tar.gz
+.travis.yml
 
 

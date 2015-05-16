@@ -114,7 +114,6 @@ read.dbi.ffdf <- function(
 		first.rows = NULL, next.rows = NULL, levels = NULL, appendLevels = TRUE, 
 		asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE, colClasses = NULL, 
 		transFUN = NULL, ...){
-  require(DBI)
 	cleanupConnection <- function(x){
 		if("resultset" %in% names(x)){
 			DBI::dbClearResult(res=x$resultset)
@@ -399,7 +398,6 @@ read.odbc.ffdf <- function(
   asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE, colClasses = NULL, 
   transFUN = NULL, ...){
   
-  require(RODBC)
   odbcinfo <- list()
   
   ##
@@ -676,7 +674,7 @@ read.jdbc.ffdf <- function(
   first.rows = NULL, next.rows = NULL, levels = NULL, appendLevels = TRUE, 
   asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE, colClasses = NULL, 
   transFUN = NULL, ...){
-  require(RJDBC)
+
   cleanupConnection <- function(x){
     if("resultset" %in% names(x)){
       RJDBC::dbClearResult(res=x$resultset)
@@ -966,7 +964,7 @@ write.dbi.ffdf <- function(x, name,
                            ...){
   stopifnot(inherits(x, "ffdf"))
   stopifnot(nrow(x) > 0)
-  require(DBI)
+
   cleanupConnection <- function(x){
     if("channel" %in% names(x)){
       DBI::dbDisconnect(x$channel)
@@ -1054,7 +1052,7 @@ write.jdbc.ffdf <- function(x, name,
                             ...){
   stopifnot(inherits(x, "ffdf"))
   stopifnot(nrow(x) > 0)
-  require(RJDBC)
+
   cleanupConnection <- function(x){
     if("channel" %in% names(x)){
       RJDBC::dbDisconnect(x$channel)
@@ -1144,7 +1142,7 @@ write.odbc.ffdf <- function(x, tablename,
                             ...){
   stopifnot(inherits(x, "ffdf"))
   stopifnot(nrow(x) > 0)
-  require(RODBC)
+
   odbcinfo <- list()
   odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)
   on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))

@@ -1,0 +1,6 @@
+##
+## Travis continuous integration
+##
+
+language: r
+

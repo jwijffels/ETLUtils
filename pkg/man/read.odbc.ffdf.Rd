@@ -70,7 +70,7 @@ the results in batches of next.rows rows using \code{RODBC::sqlGetResults}. Heav
 require(RODBC)
 x <- read.odbc.ffdf(
 query = "select * from testdata limit 10000",
-odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""),
+odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = "", believeNRows = FALSE, rows_at_time = 1),
 nrows = -1,
 first.rows = 100, next.rows = 1000, VERBOSE = TRUE)
 }

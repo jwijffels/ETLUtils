@@ -52,12 +52,12 @@ and appending them to the table.
 require(RODBC)
 x <- read.odbc.ffdf(
   query = "select * from testdata limit 10000",
-  odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""),
+  odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = "", believeNRows = FALSE, rows_at_time = 1),
   nrows = -1,
   first.rows = 100, next.rows = 1000, VERBOSE = TRUE)
 
-write.odbc.ffdf(x = x, name = "testdata", rownames = FALSE, append = TRUE,
-  odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""),
+write.odbc.ffdf(x = x, tablename = "testdata", rownames = FALSE, append = TRUE,
+  odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = "", believeNRows = FALSE, rows_at_time = 1),
   by = 1000, VERBOSE=TRUE)
 }
 }

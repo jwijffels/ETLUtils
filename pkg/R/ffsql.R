@@ -383,7 +383,7 @@ read.dbi.ffdf <- function(
 #' require(RODBC)
 #' x <- read.odbc.ffdf(
 #' query = "select * from testdata limit 10000",
-#' odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""), 
+#' odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = "", believeNRows = FALSE, rows_at_time = 1), 
 #' nrows = -1, 
 #' first.rows = 100, next.rows = 1000, VERBOSE = TRUE)
 #' }
@@ -398,18 +398,13 @@ read.odbc.ffdf <- function(
   transFUN = NULL, ...){
   
   require(RODBC)
-  cleanupConnection <- function(x){
-    if("channel" %in% names(x)){
-      RODBC::odbcClose(x$channel)
-    }
-  }
   odbcinfo <- list()
   
   ##
   ## Connect to database
   ##
   odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)
-  on.exit(cleanupConnection(odbcinfo))
+  on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   
   append <- !is.null(x)
   if(append && !inherits(x, "ffdf")){
@@ -1126,12 +1121,12 @@ write.jdbc.ffdf <- function(x, name,
 #' require(RODBC)
 #' x <- read.odbc.ffdf(
 #'   query = "select * from testdata limit 10000",
-#'   odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""), 
+#'   odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = "", believeNRows = FALSE, rows_at_time = 1), 
 #'   nrows = -1, 
 #'   first.rows = 100, next.rows = 1000, VERBOSE = TRUE)
 #'   
-#' write.odbc.ffdf(x = x, name = "testdata", rownames = FALSE, append = TRUE,
-#'   odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = ""),  
+#' write.odbc.ffdf(x = x, tablename = "testdata", rownames = FALSE, append = TRUE,
+#'   odbcConnect.args = list(dsn="smalltestsqlitedb", uid = "", pwd = "", believeNRows = FALSE, rows_at_time = 1),  
 #'   by = 1000, VERBOSE=TRUE)
 #' }
 write.odbc.ffdf <- function(x, tablename, 
@@ -1144,14 +1139,9 @@ write.odbc.ffdf <- function(x, tablename,
   stopifnot(inherits(x, "ffdf"))
   stopifnot(nrow(x) > 0)
   require(RODBC)
-  cleanupConnection <- function(x){
-    if("channel" %in% names(x)){
-      RODBC::odbcClose(x$channel)
-    }
-  }
   odbcinfo <- list()
   odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)
-  on.exit(cleanupConnection(odbcinfo))
+  on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   
   chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
   for(i in seq_along(chunks)){

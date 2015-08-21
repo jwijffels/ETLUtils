@@ -983,7 +983,7 @@ write.dbi.ffdf <- function(x, name,
     dbWriteTable.args <- list(...)
     dbWriteTable.args$conn <- dbiinfo$channel
     dbWriteTable.args$name <- name
-    dbWriteTable.args$value <- x[chunkidx, ]
+    dbWriteTable.args$value <- x[chunkidx, , drop=FALSE]
     if(i > 1 && "overwrite" %in% names(dbWriteTable.args)){
       dbWriteTable.args$overwrite <- FALSE
     }

@@ -5,9 +5,10 @@
 \title{Read data from a ODBC connection into an ffdf.}
 \usage{
 read.odbc.ffdf(query = NULL, odbcConnect.args = list(dsn = NULL, uid = "",
-  pwd = ""), odbcQuery.args = list(), sqlGetResults.args = list(),
-  x = NULL, nrows = -1, first.rows = NULL, next.rows = NULL,
-  levels = NULL, appendLevels = TRUE, asffdf_args = list(),
+  pwd = ""), odbcDriverConnect.args = list(connection = ""),
+  odbcQuery.args = list(), sqlGetResults.args = list(), x = NULL,
+  nrows = -1, first.rows = NULL, next.rows = NULL, levels = NULL,
+  appendLevels = TRUE, asffdf_args = list(),
   BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE,
   colClasses = NULL, transFUN = NULL, ...)
 }
@@ -15,6 +16,9 @@ read.odbc.ffdf(query = NULL, odbcConnect.args = list(dsn = NULL, uid = "",
 \item{query}{the SQL query to execute on the ODBC connection}
 
 \item{odbcConnect.args}{a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcConnect}} (like dsn, uid, pwd). See the examples.}
+
+\item{odbcDriverConnect.args}{a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcDriverConnect}} (like connection). If you want to
+connect using odbcDriverConnect instead of odbcConnect.}
 
 \item{odbcQuery.args}{a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcQuery}}, like rows_at_time. Defaults to an empty list.}
 
@@ -57,7 +61,8 @@ Read data from a ODBC connection into an \code{\link[ff]{ffdf}}. This can for ex
 large datasets from Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
 }
 \details{
-Opens up the ODBC connection using \code{RODBC::odbcConnect}, sends the query using \code{RODBC::odbcQuery} and retrieves
+Opens up the ODBC connection using \code{RODBC::odbcConnect} or \code{RODBC::odbcDriverConnect},
+sends the query using \code{RODBC::odbcQuery} and retrieves
 the results in batches of next.rows rows using \code{RODBC::sqlGetResults}. Heavily borrowed from \code{\link[ff]{read.table.ffdf}}
 }
 \examples{

@@ -344,11 +344,14 @@ read.dbi.ffdf <- function(
 #' Read data from a ODBC connection into an \code{\link[ff]{ffdf}}. This can for example be used to import
 #' large datasets from Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
 #' 
-#' Opens up the ODBC connection using \code{RODBC::odbcConnect}, sends the query using \code{RODBC::odbcQuery} and retrieves
+#' Opens up the ODBC connection using \code{RODBC::odbcConnect} or \code{RODBC::odbcDriverConnect}, 
+#' sends the query using \code{RODBC::odbcQuery} and retrieves
 #' the results in batches of next.rows rows using \code{RODBC::sqlGetResults}. Heavily borrowed from \code{\link[ff]{read.table.ffdf}}
 #'
 #' @param query the SQL query to execute on the ODBC connection
 #' @param odbcConnect.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcConnect}} (like dsn, uid, pwd). See the examples.
+#' @param odbcDriverConnect.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcDriverConnect}} (like connection). If you want to 
+#' connect using odbcDriverConnect instead of odbcConnect.
 #' @param odbcQuery.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcQuery}}, like rows_at_time. Defaults to an empty list.  
 #' @param sqlGetResults.args a list containing optional parameters which will be passed to \code{\link[RODBC]{sqlGetResults}}.
 #' Defaults to an empty list. The max parameter will be overwritten with first.rows and next.rows when importing in batches.     
@@ -391,6 +394,7 @@ read.dbi.ffdf <- function(
 read.odbc.ffdf <- function(
   query = NULL,
   odbcConnect.args = list(dsn=NULL, uid = "", pwd = ""), 
+  odbcDriverConnect.args  = list(connection = ""),
   odbcQuery.args = list(),
   sqlGetResults.args = list(), 		
   x = NULL, nrows = -1, 
@@ -403,7 +407,11 @@ read.odbc.ffdf <- function(
   ##
   ## Connect to database
   ##
-  odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)
+  if(!missing(odbcDriverConnect.args)){
+    odbcinfo$channel <- do.call('odbcDriverConnect', odbcDriverConnect.args)
+  }else{
+    odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)  
+  }
   on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   
   append <- !is.null(x)

@@ -14,14 +14,14 @@
 #' Read data from a DBI connection into an \code{\link[ff]{ffdf}}. This can for example be used to import
 #' large datasets from Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
 #' 
-#' Opens up the DBI connection using \code{DBI::dbConnect}, sends the query using \code{DBI::dbSendQuery} and \code{DBI::fetch}-es 
+#' Opens up the DBI connection using \code{DBI::dbConnect}, sends the query using \code{DBI::dbSendQuery} and \code{DBI::dbFetch}-es 
 #' the results in batches of next.rows rows. Heavily borrowed from \code{\link[ff]{read.table.ffdf}} 
 #'
 #' @param query the SQL query to execute on the DBI connection
 #' @param dbConnect.args a list of arguments to pass to DBI's \code{\link[DBI]{dbConnect}} (like drv, dbname, username, password). See the examples.
 #' @param dbSendQuery.args a list containing database-specific parameters which will be passed to to pass to \code{\link[DBI]{dbSendQuery}}.
 #' Defaults to an empty list.  
-#' @param fetch.args a list containing optional database-specific parameters which will be passed to to pass to \code{\link[DBI]{fetch}}. 
+#' @param dbFetch.args a list containing optional database-specific parameters which will be passed to to pass to \code{\link[DBI]{dbFetch}}. 
 #' Defaults to an empty list.          
 #' @param x NULL or an optional ffdf object to which the read records are appended. 
 #' See documentation in read.table.ffdf for more details and the example below.
@@ -36,11 +36,11 @@
 #' See documentation in \code{\link[ff]{read.table.ffdf}} for more details.
 #' @param VERBOSE logical: TRUE to verbose timings for each processed chunk (default FALSE).
 #' @param colClasses See documentation in \code{\link[ff]{read.table.ffdf}}
-#' @param transFUN function applied to the data frame after each chunk is retreived by \code{\link[DBI]{fetch}}
+#' @param transFUN function applied to the data frame after each chunk is retreived by \code{\link[DBI]{dbFetch}}
 #' @param ... optional parameters passed on to transFUN
 #' @return 
 #' An ffdf object unless the query returns zero records in which case the function will return the data.frame
-#' returned by \code{\link[DBI]{fetch}} and possibly transFUN. 
+#' returned by \code{\link[DBI]{dbFetch}} and possibly transFUN. 
 #' @export
 #' @seealso \code{\link[ff]{read.table.ffdf}, \link{read.odbc.ffdf}}
 #' @examples
@@ -109,7 +109,7 @@ read.dbi.ffdf <- function(
 		query = NULL,
 		dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""), 
 		dbSendQuery.args = list(), 
-		fetch.args = list(), 		
+		dbFetch.args = list(), 		
 		x = NULL, nrows = -1, 
 		first.rows = NULL, next.rows = NULL, levels = NULL, appendLevels = TRUE, 
 		asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE, colClasses = NULL, 
@@ -178,12 +178,12 @@ read.dbi.ffdf <- function(
 		##
 		## Read in the first chunk
 		##
-		fetch.args$res <- dbiinfo$resultset
-		fetch.args$n <- first.rows			
+		dbFetch.args$res <- dbiinfo$resultset
+		dbFetch.args$n <- first.rows			
 		if(is.null(transFUN)){
-			dat <- convertCharacterToFactor(do.call("fetch", fetch.args))
+			dat <- convertCharacterToFactor(do.call("dbFetch", dbFetch.args))
 		}else{
-			dat <- convertCharacterToFactor(transFUN(do.call("fetch", fetch.args), ...))
+			dat <- convertCharacterToFactor(transFUN(do.call("dbFetch", dbFetch.args), ...))
 		}				
 		n <- nrow(dat)
 		N <- n
@@ -287,12 +287,12 @@ read.dbi.ffdf <- function(
 			##
 			## read in subsequent chunk
 			##
-			fetch.args$res <- dbiinfo$resultset
-			fetch.args$n <- next.nrows
+			dbFetch.args$res <- dbiinfo$resultset
+			dbFetch.args$n <- next.nrows
 			if (is.null(transFUN)){
-				dat <- convertCharacterToFactor(do.call("fetch", fetch.args))
+				dat <- convertCharacterToFactor(do.call("dbFetch", dbFetch.args))
 			}else{
-				dat <- convertCharacterToFactor(transFUN(do.call("fetch", fetch.args), ...))
+				dat <- convertCharacterToFactor(transFUN(do.call("dbFetch", dbFetch.args), ...))
 			}			
 			n <- nrow(dat)
 			N <- N + n
@@ -627,14 +627,14 @@ read.odbc.ffdf <- function(
 #' Read data from a JDBC connection into an \code{\link[ff]{ffdf}}. This can for example be used to import
 #' large datasets from Oracle, SQLite, MySQL, PostgreSQL, Hive or other SQL databases into R. \cr
 #' 
-#' Opens up the JDBC connection using \code{RJDBC::dbConnect}, sends the query using \code{RJDBC::dbSendQuery} and \code{RJDBC::fetch}-es 
+#' Opens up the JDBC connection using \code{RJDBC::dbConnect}, sends the query using \code{RJDBC::dbSendQuery} and \code{RJDBC::dbFetch}-es 
 #' the results in batches of next.rows rows. Heavily borrowed from \code{\link[ff]{read.table.ffdf}} 
 #'
 #' @param query the SQL query to execute on the JDBC connection
 #' @param dbConnect.args a list of arguments to pass to JDBC's \code{RJDBC::dbConnect} (like drv, dbname, username, password). See the examples.
 #' @param dbSendQuery.args a list containing database-specific parameters which will be passed to to pass to \code{RJDBC::dbSendQuery}.
 #' Defaults to an empty list.  
-#' @param fetch.args a list containing optional database-specific parameters which will be passed to to pass to \code{RJDBC::fetch}. 
+#' @param dbFetch.args a list containing optional database-specific parameters which will be passed to to pass to \code{RJDBC::dbFetch}. 
 #' Defaults to an empty list.          
 #' @param x NULL or an optional ffdf object to which the read records are appended. 
 #' See documentation in read.table.ffdf for more details and the example below.
@@ -649,11 +649,11 @@ read.odbc.ffdf <- function(
 #' See documentation in \code{\link[ff]{read.table.ffdf}} for more details.
 #' @param VERBOSE logical: TRUE to verbose timings for each processed chunk (default FALSE).
 #' @param colClasses See documentation in \code{\link[ff]{read.table.ffdf}}
-#' @param transFUN function applied to the data frame after each chunk is retreived by \code{RJDBC::fetch}
+#' @param transFUN function applied to the data frame after each chunk is retreived by \code{RJDBC::dbFetch}
 #' @param ... optional parameters passed on to transFUN
 #' @return 
 #' An ffdf object unless the query returns zero records in which case the function will return the data.frame
-#' returned by \code{RJDBC::fetch} and possibly transFUN. 
+#' returned by \code{RJDBC::dbFetch} and possibly transFUN. 
 #' @export
 #' @seealso \code{\link[ff]{read.table.ffdf}, \link{read.jdbc.ffdf}}
 #' @examples
@@ -677,7 +677,7 @@ read.jdbc.ffdf <- function(
   query = NULL,
   dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""), 
   dbSendQuery.args = list(), 
-  fetch.args = list(),   	
+  dbFetch.args = list(),   	
   x = NULL, nrows = -1, 
   first.rows = NULL, next.rows = NULL, levels = NULL, appendLevels = TRUE, 
   asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE, colClasses = NULL, 
@@ -747,12 +747,12 @@ read.jdbc.ffdf <- function(
     ##
     ## Read in the first chunk
     ##
-    fetch.args$res <- jdbcinfo$resultset
-    fetch.args$n <- first.rows			
+    dbFetch.args$res <- jdbcinfo$resultset
+    dbFetch.args$n <- first.rows			
     if(is.null(transFUN)){
-      dat <- convertCharacterToFactor(do.call("fetch", fetch.args))
+      dat <- convertCharacterToFactor(do.call("dbFetch", dbFetch.args))
     }else{
-      dat <- convertCharacterToFactor(transFUN(do.call("fetch", fetch.args), ...))
+      dat <- convertCharacterToFactor(transFUN(do.call("dbFetch", dbFetch.args), ...))
     }				
     n <- nrow(dat)
     N <- n
@@ -856,12 +856,12 @@ read.jdbc.ffdf <- function(
       ##
       ## read in subsequent chunk
       ##
-      fetch.args$res <- jdbcinfo$resultset
-      fetch.args$n <- next.nrows
+      dbFetch.args$res <- jdbcinfo$resultset
+      dbFetch.args$n <- next.nrows
       if (is.null(transFUN)){
-        dat <- convertCharacterToFactor(do.call("fetch", fetch.args))
+        dat <- convertCharacterToFactor(do.call("dbFetch", dbFetch.args))
       }else{
-        dat <- convertCharacterToFactor(transFUN(do.call("fetch", fetch.args), ...))
+        dat <- convertCharacterToFactor(transFUN(do.call("dbFetch", dbFetch.args), ...))
       }			
       n <- nrow(dat)
       N <- N + n

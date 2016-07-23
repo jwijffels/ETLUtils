@@ -4,5 +4,4 @@
 /output
 *.tar.gz
 .travis.yml
-
-
+.httr-oauth

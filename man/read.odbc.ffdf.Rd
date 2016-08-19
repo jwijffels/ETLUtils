@@ -5,7 +5,7 @@
 \title{Read data from a ODBC connection into an ffdf.}
 \usage{
 read.odbc.ffdf(query = NULL, odbcConnect.args = list(dsn = NULL, uid = "",
-  pwd = ""), odbcDriverConnect.args = list(connection = ""),
+  pwd = ""), odbcDriverConnect.args = list(connection = ""), channel = NULL,
   odbcQuery.args = list(), sqlGetResults.args = list(), x = NULL,
   nrows = -1, first.rows = NULL, next.rows = NULL, levels = NULL,
   appendLevels = TRUE, asffdf_args = list(),
@@ -19,6 +19,8 @@ read.odbc.ffdf(query = NULL, odbcConnect.args = list(dsn = NULL, uid = "",
 
 \item{odbcDriverConnect.args}{a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcDriverConnect}} (like connection). If you want to 
 connect using odbcDriverConnect instead of odbcConnect.}
+
+\item{channel}{a connection created with \code{\link[RODBC]{odbcConnect}}}
 
 \item{odbcQuery.args}{a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcQuery}}, like rows_at_time. Defaults to an empty list.}
 

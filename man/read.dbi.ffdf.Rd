@@ -5,7 +5,7 @@
 \title{Read data from a DBI connection into an ffdf.}
 \usage{
 read.dbi.ffdf(query = NULL, dbConnect.args = list(drv = NULL, dbname = NULL,
-  username = "", password = ""), dbSendQuery.args = list(),
+  username = "", password = ""), channel = NULL, dbSendQuery.args = list(),
   dbFetch.args = list(), x = NULL, nrows = -1, first.rows = NULL,
   next.rows = NULL, levels = NULL, appendLevels = TRUE,
   asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"),
@@ -18,6 +18,8 @@ read.dbi.ffdf(query = NULL, dbConnect.args = list(drv = NULL, dbname = NULL,
 
 \item{dbSendQuery.args}{a list containing database-specific parameters which will be passed to to pass to \code{\link[DBI]{dbSendQuery}}.
 Defaults to an empty list.}
+
+\item{channel}{a connection created with \code{\link[DBI]{dbConnect}}.}
 
 \item{dbFetch.args}{a list containing optional database-specific parameters which will be passed to to pass to \code{\link[DBI]{dbFetch}}. 
 Defaults to an empty list.}

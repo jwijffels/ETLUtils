@@ -395,6 +395,7 @@ read.odbc.ffdf <- function(
   query = NULL,
   odbcConnect.args = list(dsn=NULL, uid = "", pwd = ""), 
   odbcDriverConnect.args  = list(connection = ""),
+  channel = NULL,
   odbcQuery.args = list(),
   sqlGetResults.args = list(), 		
   x = NULL, nrows = -1, 
@@ -409,7 +410,9 @@ read.odbc.ffdf <- function(
   ##
   if(!missing(odbcDriverConnect.args)){
     odbcinfo$channel <- do.call('odbcDriverConnect', odbcDriverConnect.args)
-  }else{
+  } else if (!missing(channel)){
+    odbcinfo$channel <- channel
+  } else{
     odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)  
   }
   on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))

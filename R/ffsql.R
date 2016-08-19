@@ -21,6 +21,7 @@
 #' @param dbConnect.args a list of arguments to pass to DBI's \code{\link[DBI]{dbConnect}} (like drv, dbname, username, password). See the examples.
 #' @param dbSendQuery.args a list containing database-specific parameters which will be passed to to pass to \code{\link[DBI]{dbSendQuery}}.
 #' Defaults to an empty list.  
+#' @param channel a connection created with \code{\link[DBI]{dbConnect}}
 #' @param dbFetch.args a list containing optional database-specific parameters which will be passed to to pass to \code{\link[DBI]{dbFetch}}. 
 #' Defaults to an empty list.          
 #' @param x NULL or an optional ffdf object to which the read records are appended. 
@@ -108,6 +109,7 @@
 read.dbi.ffdf <- function(
 		query = NULL,
 		dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""), 
+		channel = NULL,
 		dbSendQuery.args = list(), 
 		dbFetch.args = list(), 		
 		x = NULL, nrows = -1, 
@@ -127,7 +129,13 @@ read.dbi.ffdf <- function(
 	##
 	## Connect to database
 	##
-	dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
+	
+	if(!missing(channel)){
+	    dbiinfo$channel <- channel
+  	} else {
+  	    dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
+	}
+	
 	on.exit(cleanupConnection(dbiinfo))
 	
 	append <- !is.null(x)
@@ -352,6 +360,7 @@ read.dbi.ffdf <- function(
 #' @param odbcConnect.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcConnect}} (like dsn, uid, pwd). See the examples.
 #' @param odbcDriverConnect.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcDriverConnect}} (like connection). If you want to 
 #' connect using odbcDriverConnect instead of odbcConnect.
+#' @param channel a connection created with \code{\link[RODBC]{odbcConnect}}
 #' @param odbcQuery.args a list of arguments to pass to ODBC's \code{\link[RODBC]{odbcQuery}}, like rows_at_time. Defaults to an empty list.  
 #' @param sqlGetResults.args a list containing optional parameters which will be passed to \code{\link[RODBC]{sqlGetResults}}.
 #' Defaults to an empty list. The max parameter will be overwritten with first.rows and next.rows when importing in batches.     
@@ -635,6 +644,7 @@ read.odbc.ffdf <- function(
 #'
 #' @param query the SQL query to execute on the JDBC connection
 #' @param dbConnect.args a list of arguments to pass to JDBC's \code{RJDBC::dbConnect} (like drv, dbname, username, password). See the examples.
+#' @param channel a connection created with \code{RJDBC::dbConnect} 
 #' @param dbSendQuery.args a list containing database-specific parameters which will be passed to to pass to \code{RJDBC::dbSendQuery}.
 #' Defaults to an empty list.  
 #' @param dbFetch.args a list containing optional database-specific parameters which will be passed to to pass to \code{RJDBC::dbFetch}. 
@@ -679,6 +689,7 @@ read.odbc.ffdf <- function(
 read.jdbc.ffdf <- function(
   query = NULL,
   dbConnect.args = list(drv=NULL, dbname = NULL, username = "", password = ""), 
+  channel = NULL,
   dbSendQuery.args = list(), 
   dbFetch.args = list(),   	
   x = NULL, nrows = -1, 
@@ -699,7 +710,12 @@ read.jdbc.ffdf <- function(
   ##
   ## Connect to database
   ##
-  jdbcinfo$channel <- do.call('dbConnect', dbConnect.args)
+  if(!missing(channel)){
+    jdbcinfo$channel <- channel
+  } else {
+    jdbcinfo$channel <- do.call('dbConnect', dbConnect.args)
+  }
+
   on.exit(cleanupConnection(jdbcinfo))
   
   append <- !is.null(x)

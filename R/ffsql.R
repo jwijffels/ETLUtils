@@ -134,9 +134,8 @@ read.dbi.ffdf <- function(
 	    dbiinfo$channel <- channel
   	} else {
   	    dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
+  	    on.exit(cleanupConnection(dbiinfo))
 	}
-	
-	on.exit(cleanupConnection(dbiinfo))
 	
 	append <- !is.null(x)
 	if(append && !inherits(x, "ffdf")){
@@ -419,12 +418,13 @@ read.odbc.ffdf <- function(
   ##
   if(!missing(odbcDriverConnect.args)){
     odbcinfo$channel <- do.call('odbcDriverConnect', odbcDriverConnect.args)
+      on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   } else if (!missing(channel)){
     odbcinfo$channel <- channel
   } else{
     odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)  
+      on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   }
-  on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   
   append <- !is.null(x)
   if(append && !inherits(x, "ffdf")){
@@ -714,9 +714,8 @@ read.jdbc.ffdf <- function(
     jdbcinfo$channel <- channel
   } else {
     jdbcinfo$channel <- do.call('dbConnect', dbConnect.args)
+    on.exit(cleanupConnection(jdbcinfo))
   }
-
-  on.exit(cleanupConnection(jdbcinfo))
   
   append <- !is.null(x)
   if(append && !inherits(x, "ffdf")){

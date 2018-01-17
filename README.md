@@ -1,7 +1,3 @@
-[![Build Status](https://travis-ci.org/jwijffels/ETLUtils.png?branch=master)](https://travis-ci.org/jwijffels/ETLUtils)
-[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![Downloads](http://cranlogs.r-pkg.org/badges/ETLUtils?color=brightgreen)](https://cran.r-project.org/package=ETLUtils)
-
-
 ETLUtils
 =========
 

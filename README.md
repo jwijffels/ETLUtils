@@ -36,4 +36,4 @@ To get the lastest version from CRAN:
 * [ETLUtils @ CRAN]
 
 
-  [ETLUtils @ CRAN]: http://cran.r-project.org/web/packages/ETLUtils/index.html
+  [ETLUtils @ CRAN]: https://cran.r-project.org/package=ETLUtils

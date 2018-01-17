@@ -127,4 +127,3 @@ first.rows = 100, next.rows = 50000, nrows = -1, VERBOSE=TRUE)
 \seealso{
 \code{\link[ff]{read.table.ffdf}, \link{read.odbc.ffdf}}
 }
-

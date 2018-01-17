@@ -67,4 +67,3 @@ test <- read.jdbc.ffdf(query = "select * from helloworld",
 \seealso{
 \code{\link[RJDBC]{JDBCConnection-methods}}, \code{\link[bit]{chunk}}
 }
-

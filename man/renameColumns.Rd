@@ -27,4 +27,3 @@ renameColumns(x, from = c("x","y"), to = c("digits","letters"))
 \seealso{
 \code{\link{colnames}, \link{recoder}}
 }
-

@@ -23,4 +23,3 @@ naLOCFPlusone(x)
 \seealso{
 \code{\link[zoo]{na.locf}}
 }
-

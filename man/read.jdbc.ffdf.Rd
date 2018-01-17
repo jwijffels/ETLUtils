@@ -82,4 +82,3 @@ x[1:10, ]
 \seealso{
 \code{\link[ff]{read.table.ffdf}, \link{read.jdbc.ffdf}}
 }
-

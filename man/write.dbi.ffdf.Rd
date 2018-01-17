@@ -48,6 +48,10 @@ require(ff)
 ##
 ## Example query using data in sqlite
 ##
+## copy db in package folder to temp folder as CRAN does not allow writing in package dirs
+dbfile <- tempfile(fileext = ".sqlite3")
+file.copy(from = system.file("smalldb.sqlite3", package="ETLUtils"), to = dbfile)
+
 require(RSQLite)
 dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
 drv <- dbDriver("SQLite")
@@ -72,4 +76,3 @@ write.dbi.ffdf(x = x, name = "hellooracle", row.names = FALSE, overwrite = TRUE,
 \seealso{
 \code{\link[DBI]{dbWriteTable}}, \code{\link[bit]{chunk}}
 }
-

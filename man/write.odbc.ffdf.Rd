@@ -68,4 +68,3 @@ write.odbc.ffdf(x = x, tablename = "testdata", rownames = FALSE, append = TRUE,
 \seealso{
 \code{\link[RODBC]{sqlSave}}, \code{\link[bit]{chunk}}
 }
-

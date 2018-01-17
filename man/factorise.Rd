@@ -2,9 +2,9 @@
 % Please edit documentation in R/utils.R
 \name{factorise}
 \alias{factorise}
+\alias{factorise.default}
 \alias{factorise.character}
 \alias{factorise.data.frame}
-\alias{factorise.default}
 \alias{factorise.list}
 \title{Put character vectors, columns of a data.frame or list elements as factor}
 \usage{
@@ -42,4 +42,3 @@ str(factorise(list(a = LETTERS, b = 1:10, c = pi, d = list(x = x))))
 \seealso{
 \code{\link{as.factor}}, \code{\link{factor}}
 }
-

@@ -85,4 +85,3 @@ first.rows = 100, next.rows = 1000, VERBOSE = TRUE)
 \seealso{
 \code{\link[ff]{read.table.ffdf}, \link{read.dbi.ffdf}}
 }
-

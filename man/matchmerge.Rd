@@ -107,4 +107,3 @@ tapply(info$sales, info$distributor, FUN=sum)
 \seealso{
 \code{\link{cbind}, \link{match}, \link{merge}}
 }
-

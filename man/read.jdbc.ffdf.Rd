@@ -5,7 +5,7 @@
 \title{Read data from a JDBC connection into an ffdf.}
 \usage{
 read.jdbc.ffdf(query = NULL, dbConnect.args = list(drv = NULL, dbname =
-  NULL, username = "", password = ""), dbSendQuery.args = list(),
+  NULL, username = "", password = ""), channel = NULL, dbSendQuery.args = list(),
   dbFetch.args = list(), x = NULL, nrows = -1, first.rows = NULL,
   next.rows = NULL, levels = NULL, appendLevels = TRUE,
   asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"),
@@ -15,6 +15,8 @@ read.jdbc.ffdf(query = NULL, dbConnect.args = list(drv = NULL, dbname =
 \item{query}{the SQL query to execute on the JDBC connection}
 
 \item{dbConnect.args}{a list of arguments to pass to JDBC's \code{RJDBC::dbConnect} (like drv, dbname, username, password). See the examples.}
+
+\item{channel}{a connection created with \code{RJDBC::dbConnect}}
 
 \item{dbSendQuery.args}{a list containing database-specific parameters which will be passed to to pass to \code{RJDBC::dbSendQuery}.
 Defaults to an empty list.}

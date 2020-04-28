@@ -4,13 +4,25 @@
 \alias{read.odbc.ffdf}
 \title{Read data from a ODBC connection into an ffdf.}
 \usage{
-read.odbc.ffdf(query = NULL, odbcConnect.args = list(dsn = NULL, uid = "",
-  pwd = ""), odbcDriverConnect.args = list(connection = ""),
-  odbcQuery.args = list(), sqlGetResults.args = list(), x = NULL,
-  nrows = -1, first.rows = NULL, next.rows = NULL, levels = NULL,
-  appendLevels = TRUE, asffdf_args = list(),
-  BATCHBYTES = getOption("ffbatchbytes"), VERBOSE = FALSE,
-  colClasses = NULL, transFUN = NULL, ...)
+read.odbc.ffdf(
+  query = NULL,
+  odbcConnect.args = list(dsn = NULL, uid = "", pwd = ""),
+  odbcDriverConnect.args = list(connection = ""),
+  odbcQuery.args = list(),
+  sqlGetResults.args = list(),
+  x = NULL,
+  nrows = -1,
+  first.rows = NULL,
+  next.rows = NULL,
+  levels = NULL,
+  appendLevels = TRUE,
+  asffdf_args = list(),
+  BATCHBYTES = getOption("ffbatchbytes"),
+  VERBOSE = FALSE,
+  colClasses = NULL,
+  transFUN = NULL,
+  ...
+)
 }
 \arguments{
 \item{query}{the SQL query to execute on the ODBC connection}

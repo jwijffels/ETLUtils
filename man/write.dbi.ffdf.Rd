@@ -4,9 +4,16 @@
 \alias{write.dbi.ffdf}
 \title{Write ffdf data to a database table by using a DBI connection.}
 \usage{
-write.dbi.ffdf(x, name, dbConnect.args = list(drv = NULL, dbname = NULL,
-  username = "", password = ""), RECORDBYTES = sum(.rambytes[vmode(x)]),
-  BATCHBYTES = getOption("ffbatchbytes"), by = NULL, VERBOSE = FALSE, ...)
+write.dbi.ffdf(
+  x,
+  name,
+  dbConnect.args = list(drv = NULL, dbname = NULL, username = "", password = ""),
+  RECORDBYTES = sum(.rambytes[vmode(x)]),
+  BATCHBYTES = getOption("ffbatchbytes"),
+  by = NULL,
+  VERBOSE = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{the \code{\link[ff]{ffdf}} to write to the database}
@@ -48,10 +55,6 @@ require(ff)
 ##
 ## Example query using data in sqlite
 ##
-## copy db in package folder to temp folder as CRAN does not allow writing in package dirs
-dbfile <- tempfile(fileext = ".sqlite3")
-file.copy(from = system.file("smalldb.sqlite3", package="ETLUtils"), to = dbfile)
-
 require(RSQLite)
 dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
 drv <- dbDriver("SQLite")
@@ -59,12 +62,18 @@ query <- "select * from testdata limit 10000"
 x <- read.dbi.ffdf(query = query, dbConnect.args = list(drv = drv, dbname = dbfile), 
 first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
 
+## copy db in package folder to temp folder as CRAN does not allow writing in package dirs
+dbfile <- tempfile(fileext = ".sqlite3")
+file.copy(from = system.file("smalldb.sqlite3", package="ETLUtils"), to = dbfile)
+Sys.chmod(dbfile, mode = "777")
 write.dbi.ffdf(x = x, name = "helloworld", row.names = FALSE, overwrite = TRUE,
   dbConnect.args = list(drv = drv, dbname = dbfile), 
   by = 1000, VERBOSE=TRUE)
 test <- read.dbi.ffdf(query = "select * from helloworld", 
   dbConnect.args = list(drv = drv, dbname = dbfile))
 
+## clean up for CRAN
+file.remove(dbfile)
 \dontrun{
 require(ROracle)
 write.dbi.ffdf(x = x, name = "hellooracle", row.names = FALSE, overwrite = TRUE,

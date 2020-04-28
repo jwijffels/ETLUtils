@@ -4,9 +4,16 @@
 \alias{write.jdbc.ffdf}
 \title{Write ffdf data to a database table by using a JDBC connection.}
 \usage{
-write.jdbc.ffdf(x, name, dbConnect.args = list(drv = NULL, dbname = NULL,
-  username = "", password = ""), RECORDBYTES = sum(.rambytes[vmode(x)]),
-  BATCHBYTES = getOption("ffbatchbytes"), by = NULL, VERBOSE = FALSE, ...)
+write.jdbc.ffdf(
+  x,
+  name,
+  dbConnect.args = list(drv = NULL, dbname = NULL, username = "", password = ""),
+  RECORDBYTES = sum(.rambytes[vmode(x)]),
+  BATCHBYTES = getOption("ffbatchbytes"),
+  by = NULL,
+  VERBOSE = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{the \code{\link[ff]{ffdf}} to write to the database}

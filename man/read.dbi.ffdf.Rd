@@ -4,12 +4,24 @@
 \alias{read.dbi.ffdf}
 \title{Read data from a DBI connection into an ffdf.}
 \usage{
-read.dbi.ffdf(query = NULL, dbConnect.args = list(drv = NULL, dbname = NULL,
-  username = "", password = ""), dbSendQuery.args = list(),
-  dbFetch.args = list(), x = NULL, nrows = -1, first.rows = NULL,
-  next.rows = NULL, levels = NULL, appendLevels = TRUE,
-  asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"),
-  VERBOSE = FALSE, colClasses = NULL, transFUN = NULL, ...)
+read.dbi.ffdf(
+  query = NULL,
+  dbConnect.args = list(drv = NULL, dbname = NULL, username = "", password = ""),
+  dbSendQuery.args = list(),
+  dbFetch.args = list(),
+  x = NULL,
+  nrows = -1,
+  first.rows = NULL,
+  next.rows = NULL,
+  levels = NULL,
+  appendLevels = TRUE,
+  asffdf_args = list(),
+  BATCHBYTES = getOption("ffbatchbytes"),
+  VERBOSE = FALSE,
+  colClasses = NULL,
+  transFUN = NULL,
+  ...
+)
 }
 \arguments{
 \item{query}{the SQL query to execute on the DBI connection}

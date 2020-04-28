@@ -4,9 +4,16 @@
 \alias{write.odbc.ffdf}
 \title{Write ffdf data to a database table by using a ODBC connection.}
 \usage{
-write.odbc.ffdf(x, tablename, odbcConnect.args = list(dsn = NULL, uid = "",
-  pwd = ""), RECORDBYTES = sum(.rambytes[vmode(x)]),
-  BATCHBYTES = getOption("ffbatchbytes"), by = NULL, VERBOSE = FALSE, ...)
+write.odbc.ffdf(
+  x,
+  tablename,
+  odbcConnect.args = list(dsn = NULL, uid = "", pwd = ""),
+  RECORDBYTES = sum(.rambytes[vmode(x)]),
+  BATCHBYTES = getOption("ffbatchbytes"),
+  by = NULL,
+  VERBOSE = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{the \code{\link[ff]{ffdf}} to write to the database}

@@ -4,12 +4,24 @@
 \alias{read.jdbc.ffdf}
 \title{Read data from a JDBC connection into an ffdf.}
 \usage{
-read.jdbc.ffdf(query = NULL, dbConnect.args = list(drv = NULL, dbname =
-  NULL, username = "", password = ""), dbSendQuery.args = list(),
-  dbFetch.args = list(), x = NULL, nrows = -1, first.rows = NULL,
-  next.rows = NULL, levels = NULL, appendLevels = TRUE,
-  asffdf_args = list(), BATCHBYTES = getOption("ffbatchbytes"),
-  VERBOSE = FALSE, colClasses = NULL, transFUN = NULL, ...)
+read.jdbc.ffdf(
+  query = NULL,
+  dbConnect.args = list(drv = NULL, dbname = NULL, username = "", password = ""),
+  dbSendQuery.args = list(),
+  dbFetch.args = list(),
+  x = NULL,
+  nrows = -1,
+  first.rows = NULL,
+  next.rows = NULL,
+  levels = NULL,
+  appendLevels = TRUE,
+  asffdf_args = list(),
+  BATCHBYTES = getOption("ffbatchbytes"),
+  VERBOSE = FALSE,
+  colClasses = NULL,
+  transFUN = NULL,
+  ...
+)
 }
 \arguments{
 \item{query}{the SQL query to execute on the JDBC connection}

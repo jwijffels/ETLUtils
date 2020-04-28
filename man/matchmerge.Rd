@@ -4,9 +4,18 @@
 \alias{matchmerge}
 \title{Merge two data frames (fast) by common columns by performing a left (outer) join or an inner join.}
 \usage{
-matchmerge(x, y, by.x, by.y, all.x = FALSE, by.iskey = FALSE,
-  suffix = ".y", add.columns = colnames(y), check.duplicates = TRUE,
-  trace = FALSE)
+matchmerge(
+  x,
+  y,
+  by.x,
+  by.y,
+  all.x = FALSE,
+  by.iskey = FALSE,
+  suffix = ".y",
+  add.columns = colnames(y),
+  check.duplicates = TRUE,
+  trace = FALSE
+)
 }
 \arguments{
 \item{x}{the left hand side data frame to merge}

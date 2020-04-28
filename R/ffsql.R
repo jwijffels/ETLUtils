@@ -943,10 +943,6 @@ read.jdbc.ffdf <- function(
 #' ##
 #' ## Example query using data in sqlite
 #' ##
-#' ## copy db in package folder to temp folder as CRAN does not allow writing in package dirs
-#' dbfile <- tempfile(fileext = ".sqlite3")
-#' file.copy(from = system.file("smalldb.sqlite3", package="ETLUtils"), to = dbfile)
-#' 
 #' require(RSQLite)
 #' dbfile <- system.file("smalldb.sqlite3", package="ETLUtils")
 #' drv <- dbDriver("SQLite")
@@ -954,12 +950,18 @@ read.jdbc.ffdf <- function(
 #' x <- read.dbi.ffdf(query = query, dbConnect.args = list(drv = drv, dbname = dbfile), 
 #' first.rows = 100, next.rows = 1000, VERBOSE=TRUE)
 #' 
+#' ## copy db in package folder to temp folder as CRAN does not allow writing in package dirs
+#' dbfile <- tempfile(fileext = ".sqlite3")
+#' file.copy(from = system.file("smalldb.sqlite3", package="ETLUtils"), to = dbfile)
+#' Sys.chmod(dbfile, mode = "777")
 #' write.dbi.ffdf(x = x, name = "helloworld", row.names = FALSE, overwrite = TRUE,
 #'   dbConnect.args = list(drv = drv, dbname = dbfile), 
 #'   by = 1000, VERBOSE=TRUE)
 #' test <- read.dbi.ffdf(query = "select * from helloworld", 
 #'   dbConnect.args = list(drv = drv, dbname = dbfile))
 #' 
+#' ## clean up for CRAN
+#' file.remove(dbfile)
 #' \dontrun{
 #' require(ROracle)
 #' write.dbi.ffdf(x = x, name = "hellooracle", row.names = FALSE, overwrite = TRUE,
@@ -986,7 +988,7 @@ write.dbi.ffdf <- function(x, name,
   dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
   on.exit(cleanupConnection(dbiinfo))
     
-  chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
+  chunks <- bit::chunk(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
   for(i in seq_along(chunks)){
     if (VERBOSE){
       cat(sprintf("%s dbWriteTable chunk %s/%s\n", Sys.time(), i, length(chunks)))
@@ -1074,7 +1076,7 @@ write.jdbc.ffdf <- function(x, name,
   dbiinfo$channel <- do.call('dbConnect', dbConnect.args)
   on.exit(cleanupConnection(dbiinfo))
   
-  chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
+  chunks <- bit::chunk(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
   for(i in seq_along(chunks)){
     if (VERBOSE){
       cat(sprintf("%s dbWriteTable chunk %s/%s\n", Sys.time(), i, length(chunks)))
@@ -1159,7 +1161,7 @@ write.odbc.ffdf <- function(x, tablename,
   odbcinfo$channel <- do.call('odbcConnect', odbcConnect.args)
   on.exit(try(RODBC::odbcClose(odbcinfo$channel), silent = TRUE))
   
-  chunks <- ff::chunk.ffdf(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
+  chunks <- bit::chunk(x, RECORDBYTES=RECORDBYTES, BATCHBYTES=BATCHBYTES, by=by)
   for(i in seq_along(chunks)){
     if (VERBOSE){
       cat(sprintf("%s sqlSave chunk %s/%s\n", Sys.time(), i, length(chunks)))

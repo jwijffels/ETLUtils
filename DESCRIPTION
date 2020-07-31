@@ -14,7 +14,6 @@ Description: Provides functions to facilitate the use of the 'ff' package
     basic function for re-coding vectors.
 Version: 1.5
 URL: https://github.com/jwijffels/ETLUtils
-Date: 2020-04-28
 Depends:
     ff (>= 4.0.0)
 Imports:

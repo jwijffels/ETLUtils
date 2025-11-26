@@ -51,6 +51,7 @@ and appending them to the table.
 }
 \examples{
 require(ff)
+require(DBI)
 
 ##
 ## Example query using data in sqlite

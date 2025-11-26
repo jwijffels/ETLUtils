@@ -76,6 +76,7 @@ the results in batches of next.rows rows. Heavily borrowed from \code{\link[ff]{
 \examples{
 \dontrun{
 require(ff)
+require(DBI)
 
 ##
 ## Example query using data in sqlite

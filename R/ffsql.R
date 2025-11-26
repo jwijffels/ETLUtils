@@ -45,6 +45,7 @@
 #' @seealso \code{\link[ff]{read.table.ffdf}, \link{read.odbc.ffdf}}
 #' @examples
 #' require(ff)
+#' require(DBI)
 #' 
 #' ##
 #' ## Example query using data in sqlite
@@ -659,6 +660,7 @@ read.odbc.ffdf <- function(
 #' @examples
 #' \dontrun{
 #' require(ff)
+#' require(DBI)
 #' 
 #' ##
 #' ## Example query using data in sqlite
@@ -939,6 +941,7 @@ read.jdbc.ffdf <- function(
 #' @seealso \code{\link[DBI]{dbWriteTable}}, \code{\link[bit]{chunk}}
 #' @examples
 #' require(ff)
+#' require(DBI)
 #' 
 #' ##
 #' ## Example query using data in sqlite
@@ -1039,6 +1042,7 @@ write.dbi.ffdf <- function(x, name,
 #' @examples
 #' \dontrun{
 #' require(ff)
+#' require(DBI)
 #' 
 #' ##
 #' ## Example query using data in sqlite

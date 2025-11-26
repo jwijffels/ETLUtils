@@ -11,6 +11,13 @@ Provides functions to load bigdata (e.g. from Oracle) directly into \code{ffdf} 
 \examples{
 # See the specified functions in the package
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/jwijffels/ETLUtils}
+}
+
+}
 \author{
 Jan Wijffels \email{jwijffels@bnosac.be}
 }

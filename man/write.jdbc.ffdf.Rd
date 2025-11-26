@@ -52,6 +52,7 @@ and appending them to the table.
 \examples{
 \dontrun{
 require(ff)
+require(DBI)
 
 ##
 ## Example query using data in sqlite

@@ -1,6 +1,9 @@
 Package: ETLUtils
 ================
 
+Version: 1.6 [2025-11-26]
+- Replace Author with Authors@R in DESCRIPTION and drop Maintainer field
+
 Version: 1.5 [2020-04-28]
 - Adapt to changes of ff / bit. Use ff >= 4.0.0 and bit >= 4.0.0
 
